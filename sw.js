@@ -3,9 +3,11 @@ self.addEventListener('install', () => {
   self.skipWaiting()
 })
 self.addEventListener('activate', (event) => {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(self.clients.claim())
 })
 
+// The current streams. The key is the pathname, the value is the
+// `ReadableStream`.
 const streams = new Map()
 
 const createReadableStream = (port) => {
@@ -39,11 +41,10 @@ const createReadableStream = (port) => {
   })
 }
 
-
 self.addEventListener('message', (event) => {
   // When a port is supplied, it means that a new download should be started.
   // All other messages are ignored, they are only sent to keep the service
-  // worker alive
+  // worker alive.
   if (event.ports.length == 1) {
     const port = event.ports[0]
     const pathname = event.data.pathname
