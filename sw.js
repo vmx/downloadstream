@@ -66,6 +66,9 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
+  // The stream started to be processed, hence remove it from the list of
+  // streams.
+  streams.delete(url.pathnames)
 
   const headers = new Headers({
     'Content-Type': 'application/octet-stream',
