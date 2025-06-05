@@ -47,7 +47,6 @@ const downloadStream = (filename, queuingStrategy) => {
       channel.port1.postMessage(chunk)
     },
     close(controller) {
-      console.log('vmx: called close on writable stream')
       channel.port1.postMessage('close')
       window.clearInterval(ping)
     },
