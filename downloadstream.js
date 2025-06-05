@@ -16,8 +16,13 @@ registerServiceWorker()
 
 const downloadStream = (filename, queuingStrategy) => {
   // Generate a URL that is unique that will be used to trigger the download.
+  // It's relative to the HTML page it was called from, so that the service
+  // worker can be scoped accordingly.
   const uuid = crypto.randomUUID()
-  const url = new URL(`${window.location.origin}/${PREFIX}/${uuid}/${filename}`)
+  const basedir = window.location.pathname.substring(
+    0, window.location.pathname.lastIndexOf('/') + 1)
+  const url = new URL(
+    `${window.location.origin}${basedir}${PREFIX}/${uuid}/${filename}`)
 
   // Each download has a `MessageChannel` associate, which is the way to
   // transfer the data from a stream into the service worker, which will
