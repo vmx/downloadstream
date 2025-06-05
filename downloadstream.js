@@ -4,9 +4,11 @@ const PREFIX = '_download'
 
 
 const registerServiceWorker = async () => {
-  // Pass in the `prefix` as a query parameter, so that it doesn't need to be
-  // hard-coded within the servie worker.
-  const registration = await navigator.serviceWorker.register(`sw.js`)
+  const registration = await navigator.serviceWorker.register(`./sw.js`)
+  if (navigator.serviceWorker.controller === null) {
+    console.log("Service worked wasn't registered, probably due to a forced reload. Hence reloading the page.")
+    window.location.reload()
+  }
 }
 
 registerServiceWorker()
