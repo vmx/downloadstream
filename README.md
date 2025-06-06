@@ -30,7 +30,9 @@ There is a single function called `downloadStream()`, which returns a
 ### Examples
 
 The examples mentioned below can be found and run from the
-[examples directory].
+[examples directory]. The easiest way is to run a HTTP server from the root of
+this repository (e.g. `python -m http.server`) and navigate into the `examples`
+directory.
 
 
 ### From ReadableStream
