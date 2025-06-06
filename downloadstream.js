@@ -4,7 +4,13 @@ const PREFIX = '_download'
 
 
 const registerServiceWorker = async () => {
-  const registration = await navigator.serviceWorker.register(`./sw.js`)
+  // If the `sw` query parameter is set, use that path instead.
+  let swParam = new URL(import.meta.url).searchParams.get('sw')
+  if (swParam === null) {
+    await navigator.serviceWorker.register(`sw.js`)
+  } else {
+    await navigator.serviceWorker.register(swParam)
+  }
   if (navigator.serviceWorker.controller === null) {
     console.log("Service worked wasn't registered, probably due to a forced reload. Please reload the page.")
   }
