@@ -5,10 +5,6 @@ document.getElementsByTagName('button')[0].addEventListener('click', async (even
 
   const outputStream = downloadStream('myfile.data').getWriter()
 
-  //const data = new Uint8Array([1,2,3,4,5,6,7])
-  //outputStream.write(data)
-  //outputStream.close()
-
   let counter = 0
   const intervalID = window.setInterval(() => {
     console.log('sending a byte:', counter)
