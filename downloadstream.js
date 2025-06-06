@@ -6,8 +6,7 @@ const PREFIX = '_download'
 const registerServiceWorker = async () => {
   const registration = await navigator.serviceWorker.register(`./sw.js`)
   if (navigator.serviceWorker.controller === null) {
-    console.log("Service worked wasn't registered, probably due to a forced reload. Hence reloading the page.")
-    window.location.reload()
+    console.log("Service worked wasn't registered, probably due to a forced reload. Please reload the page.")
   }
 }
 
