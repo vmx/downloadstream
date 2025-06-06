@@ -78,4 +78,4 @@ const downloadStream = (filename, queuingStrategy) => {
   return writableStream
 }
 
-export default downloadStream
+export { downloadStream }
