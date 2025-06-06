@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Downloadstream demo</title>
+    <script type="module">
+      import downloadStream from '../downloadstream.js?sw=../sw.js'
+
+      const button = document.getElementsByTagName('button')[0]
+      button.addEventListener('click', async (event) => {
+        event.preventDefault()
+
+        const outputStream = downloadStream('myfile.data').getWriter()
+
+        let counter = 0
+        const intervalID = window.setInterval(() => {
+          console.log('sending a byte:', counter)
+          const data = new Uint8Array([counter])
+          outputStream.write(data)
+          counter += 1
+        }, 5000)
+      })
+    </script>
+  </head>
+  <body>
+    <h1>Download endless stream</h1>
+    <button>Start endless stream</button>
+  </body>
+</html>

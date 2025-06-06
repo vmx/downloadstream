@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Downloadstream demo</title>
+    <script type="module">
+      import downloadStream from '../downloadstream.js?sw=../sw.js'
+
+      const button = document.getElementsByTagName('button')[0]
+      button.addEventListener('click', async (event) => {
+        event.preventDefault()
+
+        // Use the local README instead of a remote resource, so that examples
+        // work offline.
+        fetch('../README.md')
+          .then(async (response) => {
+            const inputStream = response.body
+            const outputStream = downloadStream('README.md')
+            await inputStream.pipeTo(outputStream)
+          })
+      })
+    </script>
+  </head>
+  <body>
+    <h1>Download a ReadableStream</h1>
+    <button>Download stream</button>
+  </body>
+</html>
