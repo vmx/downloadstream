@@ -40,7 +40,7 @@ directory.
 This example pipes a [ReadableStream] into a download.
 
 ```js
-import { downloadStream } from `downloadstream`
+import { downloadStream } from `./downloadstream.js`
 
 fetch('https://api.github.com/')
   .then((response) => {
@@ -56,7 +56,7 @@ fetch('https://api.github.com/')
 This example outputs seven bytes into a file.
 
 ```js
-import { downloadStream } from `downloadstream`
+import { downloadStream } from `./downloadstream.js`
 
 const outputStream = downloadStream('myfile.data').getWriter()
 
@@ -72,7 +72,7 @@ This example keeps writing single bytes into a stream every 5s. You need to
 cancel the download in order to stop it.
 
 ```js
-import { downloadStream } from `downloadstream`
+import { downloadStream } from `./downloadstream.js`
 
 const outputStream = downloadStream('myfile.data').getWriter()
 
@@ -95,7 +95,7 @@ else, you can define a custom path with supplying the `sw` query parameter on
 the import. Example:
 
 ```js
-import { downloadStream } from 'downloadstream?sw=../sw.js'
+import { downloadStream } from './downloadstream.js?sw=../sw.js'
 ```
 
 
