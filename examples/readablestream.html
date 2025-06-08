@@ -12,12 +12,10 @@
 
         // Use the local README instead of a remote resource, so that examples
         // work offline.
-        fetch('../README.md')
-          .then(async (response) => {
-            const inputStream = response.body
-            const outputStream = downloadStream('README.md')
-            await inputStream.pipeTo(outputStream)
-          })
+        const response = await fetch('../README.md')
+        const inputStream = response.body
+        const outputStream = await downloadStream('README.md')
+        await inputStream.pipeTo(outputStream)
       })
     </script>
   </head>

@@ -1,33 +1,31 @@
 // A prefix that will be used for the non-existent URLs that will trigger the
 // download.
-const PREFIX = '_download'
+const PREFIX = '_downloadstream'
 
+// Returns the base directory (path without the filename at the end) of the
+// current script. It's without a trailing slash.
+const basedir = () => {
+  const pathname = new URL(import.meta.url).pathname
+  return pathname.substring(0, pathname.lastIndexOf('/'))
+}
 
 const registerServiceWorker = async () => {
-  // If the `sw` query parameter is set, use that path instead.
-  let swParam = new URL(import.meta.url).searchParams.get('sw')
-  if (swParam === null) {
-    await navigator.serviceWorker.register(`sw.js`)
-  } else {
-    await navigator.serviceWorker.register(swParam)
-  }
-  if (navigator.serviceWorker.controller === null) {
-    console.log("Service worked wasn't registered, probably due to a forced reload. Please reload the page.")
-  }
+  const base = basedir()
+  await navigator.serviceWorker.register(`${base}/sw.js`)
 }
 
 registerServiceWorker()
 
-
-const downloadStream = (filename, queuingStrategy) => {
+const downloadStream = async (filename, queuingStrategy) => {
   // Generate a URL that is unique that will be used to trigger the download.
-  // It's relative to the HTML page it was called from, so that the service
-  // worker can be scoped accordingly.
+  // It's relative to the service worker.
   const uuid = crypto.randomUUID()
-  const basedir = window.location.pathname.substring(
-    0, window.location.pathname.lastIndexOf('/') + 1)
-  const url = new URL(
-    `${window.location.origin}${basedir}${PREFIX}/${uuid}/${filename}`)
+  const base = basedir()
+  const pathname = `${base}/${PREFIX}/${uuid}/${filename}`
+
+  // The service worker might reside in a sub-directory.
+  const registration = await navigator.serviceWorker.getRegistration(
+      `${base}/`)
 
   // Each download has a `MessageChannel` associate, which is the way to
   // transfer the data from a stream into the service worker, which will
@@ -35,8 +33,7 @@ const downloadStream = (filename, queuingStrategy) => {
   const channel = new MessageChannel()
 
   // Setup the service worker to do the right thing for this pathname
-  const pathname = url.pathname
-  navigator.serviceWorker.controller.postMessage({ pathname }, [channel.port2])
+  registration.active.postMessage({ pathname }, [channel.port2])
 
   let ping
   const writableStream = new WritableStream({

@@ -10,7 +10,7 @@
       button.addEventListener('click', async (event) => {
         event.preventDefault()
 
-        const outputStream = downloadStream('myfile.data').getWriter()
+        const outputStream = (await downloadStream('myfile.data')).getWriter()
 
         let counter = 0
         const intervalID = window.setInterval(() => {

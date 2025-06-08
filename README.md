@@ -19,8 +19,8 @@ The biggest difference is that it expects that your page is with a
 Usage
 -----
 
-There is a single function called `downloadStream()`, which returns a
-[WritableStream]. The input parameters are:
+There is a single async function called `downloadStream()`, which returns a
+Promise with a [WritableStream]. The input parameters are:
 
  - `filename`: the name that should be used for the download.
  - `queuingStrategy` (optional): [WritableStream] takes a [queuing strategy] as
@@ -42,12 +42,10 @@ This example pipes a [ReadableStream] into a download.
 ```js
 import { downloadStream } from `./downloadstream.js`
 
-fetch('https://api.github.com/')
-  .then((response) => {
-    const inputStream = response.body
-    const outputStream = downloadStream('github_api.json')
-    await inputStream.pipeTo(outputStream)
-  })
+const response = await fetch('https://api.github.com/')
+const inputStream = response.body
+const outputStream = await downloadStream('github_api.json')
+await inputStream.pipeTo(outputStream)
 ```
 
 
@@ -58,7 +56,7 @@ This example outputs seven bytes into a file.
 ```js
 import { downloadStream } from `./downloadstream.js`
 
-const outputStream = downloadStream('myfile.data').getWriter()
+const outputStream = (await downloadStream('myfile.data')).getWriter()
 
 const data = new Uint8Array([1,2,3,4,5,6,7])
 outputStream.write(data)
@@ -74,7 +72,7 @@ cancel the download in order to stop it.
 ```js
 import { downloadStream } from `./downloadstream.js`
 
-const outputStream = downloadStream('myfile.data').getWriter()
+const outputStream = (await downloadStream('myfile.data')).getWriter()
 
 let counter = 0
 const intervalID = window.setInterval(() => {
@@ -83,19 +81,6 @@ const intervalID = window.setInterval(() => {
   outputStream.write(data)
   counter += 1
 }, 5000)
-```
-
-
-### Advanced usage
-
-The service worker file `sw.js` is expected to be in the same directory as the
-HTML file which imports `downloadstream`. This way the scope of the service
-worker starts at that location. In case your service worker file is somewhere
-else, you can define a custom path with supplying the `sw` query parameter on
-the import. Example:
-
-```js
-import { downloadStream } from './downloadstream.js?sw=../sw.js'
 ```
 
 
@@ -110,13 +95,13 @@ The workaround is to use a service worker that intercepts fake download URLs.
 
 First step is installing a service worker which listens to all fetches. When
 calling `downloadStream()` a URL that doesn't really exist is generated. It's
-relative to the location of the HTML page you called it from and has the shape:
+relative to the location of the service worker and has the shape:
 
-    _download/<a-uuid>/<the-filename>
+    _downloadstream/<a-uuid>/<the-filename>
 
-The `_download` prefix was choose so that you can easily debug things or log
-anything related to those requests, the UUID makes sure there are no clashes
-with actual files.
+The `_downloadstream` prefix was choose so that you can easily debug things or
+log anything related to those requests, the UUID makes sure there are no
+clashes with actual files.
 
 Then a stream gets associated with the URL. A link (a `<a href>`) is generated
 with that URL, which then is "clicked" programmatically. That click requests
